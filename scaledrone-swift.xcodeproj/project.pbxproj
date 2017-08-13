@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D32BD7894D2BBE9DA57CD9C /* Pods_scaledrone_swift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A614A68DADC1F9382DC7109E /* Pods_scaledrone_swift.framework */; };
+		B648DA2A1F3F764400283AE4 /* Scaledrone.swift in Sources */ = {isa = PBXBuildFile; fileRef = B648DA291F3F764400283AE4 /* Scaledrone.swift */; };
 		B6F3B8451F3F69CE0063002B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F3B8441F3F69CE0063002B /* AppDelegate.swift */; };
 		B6F3B8471F3F69CE0063002B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B6F3B8461F3F69CE0063002B /* ViewController.swift */; };
 		B6F3B84A1F3F69CE0063002B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B6F3B8481F3F69CE0063002B /* Main.storyboard */; };
@@ -15,6 +17,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		203D7933025950BDB03EE0C7 /* Pods-scaledrone-swift.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-scaledrone-swift.release.xcconfig"; path = "Pods/Target Support Files/Pods-scaledrone-swift/Pods-scaledrone-swift.release.xcconfig"; sourceTree = "<group>"; };
+		4C3AED4EB2DEFCB03B74C9C2 /* Pods-scaledrone-swift.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-scaledrone-swift.debug.xcconfig"; path = "Pods/Target Support Files/Pods-scaledrone-swift/Pods-scaledrone-swift.debug.xcconfig"; sourceTree = "<group>"; };
+		A614A68DADC1F9382DC7109E /* Pods_scaledrone_swift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_scaledrone_swift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		B648DA291F3F764400283AE4 /* Scaledrone.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Scaledrone.swift; sourceTree = "<group>"; };
 		B6F3B8411F3F69CE0063002B /* scaledrone-swift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "scaledrone-swift.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B6F3B8441F3F69CE0063002B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		B6F3B8461F3F69CE0063002B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -29,17 +35,29 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				6D32BD7894D2BBE9DA57CD9C /* Pods_scaledrone_swift.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		71F9DCE5818ADD0FAC4D814E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				4C3AED4EB2DEFCB03B74C9C2 /* Pods-scaledrone-swift.debug.xcconfig */,
+				203D7933025950BDB03EE0C7 /* Pods-scaledrone-swift.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		B6F3B8381F3F69CE0063002B = {
 			isa = PBXGroup;
 			children = (
 				B6F3B8431F3F69CE0063002B /* scaledrone-swift */,
 				B6F3B8421F3F69CE0063002B /* Products */,
+				71F9DCE5818ADD0FAC4D814E /* Pods */,
+				F4CB5431EDC10C6BFF21F324 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,8 +78,17 @@
 				B6F3B84B1F3F69CE0063002B /* Assets.xcassets */,
 				B6F3B84D1F3F69CE0063002B /* LaunchScreen.storyboard */,
 				B6F3B8501F3F69CE0063002B /* Info.plist */,
+				B648DA291F3F764400283AE4 /* Scaledrone.swift */,
 			);
 			path = "scaledrone-swift";
+			sourceTree = "<group>";
+		};
+		F4CB5431EDC10C6BFF21F324 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				A614A68DADC1F9382DC7109E /* Pods_scaledrone_swift.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,9 +98,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = B6F3B8531F3F69CE0063002B /* Build configuration list for PBXNativeTarget "scaledrone-swift" */;
 			buildPhases = (
+				2443B02EE4ECDADE0279D6FE /* [CP] Check Pods Manifest.lock */,
 				B6F3B83D1F3F69CE0063002B /* Sources */,
 				B6F3B83E1F3F69CE0063002B /* Frameworks */,
 				B6F3B83F1F3F69CE0063002B /* Resources */,
+				4CDEEF13A8ED0579CAEA2047 /* [CP] Embed Pods Frameworks */,
+				9B4B9170C983381489590CC0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -131,11 +161,66 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		2443B02EE4ECDADE0279D6FE /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-scaledrone-swift-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4CDEEF13A8ED0579CAEA2047 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-scaledrone-swift/Pods-scaledrone-swift-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-scaledrone-swift/Pods-scaledrone-swift-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9B4B9170C983381489590CC0 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-scaledrone-swift/Pods-scaledrone-swift-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		B6F3B83D1F3F69CE0063002B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B648DA2A1F3F764400283AE4 /* Scaledrone.swift in Sources */,
 				B6F3B8471F3F69CE0063002B /* ViewController.swift in Sources */,
 				B6F3B8451F3F69CE0063002B /* AppDelegate.swift in Sources */,
 			);
@@ -258,6 +343,7 @@
 		};
 		B6F3B8541F3F69CE0063002B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4C3AED4EB2DEFCB03B74C9C2 /* Pods-scaledrone-swift.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "scaledrone-swift/Info.plist";
@@ -270,6 +356,7 @@
 		};
 		B6F3B8551F3F69CE0063002B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 203D7933025950BDB03EE0C7 /* Pods-scaledrone-swift.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "scaledrone-swift/Info.plist";
@@ -299,6 +386,7 @@
 				B6F3B8551F3F69CE0063002B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
