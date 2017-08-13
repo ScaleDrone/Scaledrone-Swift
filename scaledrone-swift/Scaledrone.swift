@@ -1,16 +1,30 @@
 import Starscream
 
+public protocol ScaledroneDelegate: class {
+    func onOpen(error: NSError?)
+    func onError(error: NSError?)
+}
+
+public protocol ScaledroneRoomDelegate: class {
+    func onOpen(error: NSError?)
+    func onMessage(message: String)
+}
+
 class Scaledrone: WebSocketDelegate {
+    
     let socket = WebSocket(url: URL(string: "ws://localhost:3900/websocket")!)
-    let callbacks:[Int:Any] = [:]
-    var handshakeCallbackId:Int = 0
+    let callbacks:[Int:(Any?)->()] = [:]
+    var callbackId:Int = 0
+    
+    public weak var delegate: ScaledroneDelegate?
     
     func getCallbackId() -> Int {
-        handshakeCallbackId += 1
-        return handshakeCallbackId
+        callbackId += 1
+        return callbackId
     }
     
-    init() {
+    func connect() {
+        print("connecting")
         socket.delegate = self
         socket.connect()
     }
@@ -25,6 +39,7 @@ class Scaledrone: WebSocketDelegate {
             "callback": getCallbackId()
         ] as [String : Any]
         self.send(msg)
+        self.delegate?.onOpen(error: nil)
     }
     
     func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
