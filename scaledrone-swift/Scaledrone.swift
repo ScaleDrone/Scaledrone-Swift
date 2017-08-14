@@ -1,16 +1,16 @@
 import Starscream
 
 public protocol ScaledroneDelegate: class {
-    func onOpen(error: NSError?)
-    func onError(error: NSError?)
+    func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?)
+    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?)
 }
 
 public protocol ScaledroneRoomDelegate: class {
-    func onOpen(error: NSError?)
-    func onMessage(message: String)
+    func scaledroneRoomDidConnect(error: NSError?)
+    func scaledroneRoomDidReceiveMessage(message: String)
 }
 
-class Scaledrone: WebSocketDelegate {
+public class Scaledrone: WebSocketDelegate {
     
     let socket = WebSocket(url: URL(string: "ws://localhost:3900/websocket")!)
     let callbacks:[Int:(Any?)->()] = [:]
@@ -31,7 +31,7 @@ class Scaledrone: WebSocketDelegate {
     
     // MARK: Websocket Delegate Methods.
     
-    func websocketDidConnect(socket: WebSocket) {
+    public func websocketDidConnect(socket: WebSocket) {
         print("websocket is connected")
         let msg = [
             "action": "handshake",
@@ -39,10 +39,10 @@ class Scaledrone: WebSocketDelegate {
             "callback": getCallbackId()
         ] as [String : Any]
         self.send(msg)
-        self.delegate?.onOpen(error: nil)
+        self.delegate?.scaledroneDidConnect(scaledrone: self, error: nil)
     }
     
-    func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
+    public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
         if let e = error {
             print("websocket is disconnected: \(e.localizedDescription)")
         } else {
@@ -50,11 +50,16 @@ class Scaledrone: WebSocketDelegate {
         }
     }
     
-    func websocketDidReceiveMessage(socket: WebSocket, text: String) {
+    public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
         print("Received text: \(text)")
+        let dic = convertJSONMessageToDictionary(text: text)
+        
+        if let data = dic["data"] as? [String: Any] {
+            print(data["clientId"]!)
+        }
     }
     
-    func websocketDidReceiveData(socket: WebSocket, data: Data) {
+    public func websocketDidReceiveData(socket: WebSocket, data: Data) {
         print("Received data: \(data.count)")
     }
     
@@ -72,22 +77,19 @@ class Scaledrone: WebSocketDelegate {
         }
     }
     
-    // MARK: Write Text Action
-    
-    @IBAction func writeText(_ sender: UIBarButtonItem) {
-        socket.write(string: "hello there!")
-    }
-    
-    // MARK: Disconnect Action
-    
-    @IBAction func disconnect(_ sender: UIBarButtonItem) {
-        if socket.isConnected {
-            sender.title = "Connect"
-            socket.disconnect()
-        } else {
-            sender.title = "Disconnect"
-            socket.connect()
+}
+
+func convertJSONMessageToDictionary(text: String) -> [String: Any] {
+    if let message = text.data(using: .utf8) {
+        do {
+            var json = try JSONSerialization.jsonObject(with: message, options: []) as! [String: Any]
+            if let data = json["data"] as? [[String: Any]] {
+                json["data"] = data
+            }
+            return json
+        } catch {
+            print(error.localizedDescription)
         }
     }
-    
+    return [:]
 }

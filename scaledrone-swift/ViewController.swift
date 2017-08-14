@@ -10,22 +10,23 @@ import UIKit
 
 class ViewController: UIViewController, ScaledroneDelegate {
     
+    let sd = Scaledrone()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         print("Creating new Scaledrone instance")
-        let sd = Scaledrone()
         sd.delegate = self
         sd.connect()
     }
     
-    func onOpen(error: NSError?) {
+    func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?) {
         if (error != nil) {
             print(error!);
         }
         print("sd open")
     }
     
-    func onError(error: NSError?) {
+    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
         if (error != nil) {
             print(error!);
         }
