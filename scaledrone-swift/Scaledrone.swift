@@ -3,6 +3,7 @@ import Starscream
 public protocol ScaledroneDelegate: class {
     func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?)
     func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?)
+    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: NSError?)
 }
 
 public protocol ScaledroneRoomDelegate: class {
@@ -14,17 +15,18 @@ public class Scaledrone: WebSocketDelegate {
     
     private typealias Callback = ([String:Any]) -> Void
     
-    private let socket = WebSocket(url: URL(string: "ws://localhost:3900/websocket")!)
+    private let socket:WebSocket
     private var callbacks:[Int:Callback] = [:]
     private var callbackId:Int = 0
     private var rooms:[String:ScaledroneRoom] = [:]
+    private let channelID:String
     public var clientID:String = ""
     
     public weak var delegate: ScaledroneDelegate?
     
-    func getCallbackId() -> Int {
-        callbackId += 1
-        return callbackId
+    init(channelID: String, url: String? = "wss://api2.scaledrone.com/websocket") {
+        self.channelID = channelID
+        socket = WebSocket(url: URL(string: url!)!)
     }
     
     private func createCallback(fn: @escaping Callback) -> Int {
@@ -45,7 +47,7 @@ public class Scaledrone: WebSocketDelegate {
         print("websocket is connected")
         let msg = [
             "action": "handshake",
-            "channel": "hDP2vDRHVuX298P5",
+            "channel": self.channelID,
             "callback": createCallback(fn: { data in
                 self.clientID = data["clientId"] as! String
                 self.delegate?.scaledroneDidConnect(scaledrone: self, error: nil)
@@ -55,15 +57,10 @@ public class Scaledrone: WebSocketDelegate {
     }
     
     public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
-        if let e = error {
-            print("websocket is disconnected: \(e.localizedDescription)")
-        } else {
-            print("websocket disconnected")
-        }
+        delegate?.scaledroneDidDisconnect(scaledrone: self, error: error)
     }
     
     public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
-        print("Received text: \(text)")
         let dic = convertJSONMessageToDictionary(text: text)
         
         var data:[String:Any] = [:]
@@ -71,16 +68,15 @@ public class Scaledrone: WebSocketDelegate {
             data = d
         }
         
+        if let error = dic["error"] as? String {
+            delegate?.scaledroneDidReceiveError(scaledrone: self, error: NSError(domain: "scaledrone.com", code: 0, userInfo: ["error": error]))
+            return
+        }
+        
         if let cb = dic["callback"] as? Int {
             if let fn = callbacks[cb] as Callback! {
                 fn(data)
             }
-            return
-        }
-        
-        if let error = dic["error"] as? String {
-            //delegate?.scaledroneDidReceiveError(scaledrone: <#T##Scaledrone#>, error: NSError?)
-            print("error", error)
             return
         }
         
@@ -92,10 +88,10 @@ public class Scaledrone: WebSocketDelegate {
     }
     
     public func websocketDidReceiveData(socket: WebSocket, data: Data) {
-        print("Received data: \(data.count)")
+        print("Should not have received any data: \(data.count)")
     }
     
-    func send(_ value: Any) {
+    private func send(_ value: Any) {
         guard JSONSerialization.isValidJSONObject(value) else {
             print("[WEBSOCKET] Value is not a valid JSON object.\n \(value)")
             return
@@ -109,7 +105,7 @@ public class Scaledrone: WebSocketDelegate {
         }
     }
     
-    func subscribe(roomName: String) -> ScaledroneRoom {
+    public func subscribe(roomName: String) -> ScaledroneRoom {
         let room = ScaledroneRoom(name: roomName)
         rooms[roomName] = room
         
@@ -123,6 +119,10 @@ public class Scaledrone: WebSocketDelegate {
         self.send(msg)
         
         return room
+    }
+    
+    public func disconnect() {
+        socket.disconnect()
     }
     
 }

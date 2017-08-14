@@ -1,20 +1,11 @@
-//
-//  ViewController.swift
-//  SimpleTest
-//
-//  Created by Dalton Cherry on 8/12/14.
-//  Copyright (c) 2014 vluxe. All rights reserved.
-//
-
 import UIKit
 
 class ViewController: UIViewController, ScaledroneDelegate, ScaledroneRoomDelegate {
     
-    let scaledrone = Scaledrone()
+    let scaledrone = Scaledrone(channelID: "KtJ2qzn3CF3svSFe")
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("Creating new Scaledrone instance")
         scaledrone.delegate = self
         scaledrone.connect()
     }
@@ -23,23 +14,24 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneRoomDelega
         if (error != nil) {
             print(error!);
         }
-        print("sd open", scaledrone.clientID)
+        print("Connected to Scaledrone channel", scaledrone.clientID)
         let room = scaledrone.subscribe(roomName: "notifications")
         room.delegate = self
     }
     
     func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
-        if (error != nil) {
-            print(error!);
-        }
-        print("sd error")
+        print("Scaledrone error")
+    }
+    
+    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: NSError?) {
+        print("Scaledrone disconnected")
     }
     
     func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?) {
-        print("room connected", room)
+        print("Scaledrone connected to room", room.name)
     }
     
     func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: String) {
-        print("received message", message)
+        print("Room received message:", message)
     }
 }

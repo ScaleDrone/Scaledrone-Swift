@@ -1,11 +1,3 @@
-//
-//  AppDelegate.swift
-//  scaledrone-swift
-//
-//  Created by Serge Herkül on 12/08/2017.
-//  Copyright © 2017 Scaledrone. All rights reserved.
-//
-
 import UIKit
 
 @UIApplicationMain

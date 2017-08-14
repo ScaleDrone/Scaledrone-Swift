@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "scaledrone-swift/ViewController.swift"
-            timestampString = "524324734.063607"
+            timestampString = "524418395.193959"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11"
-            endingLineNumber = "11"
+            startingLineNumber = "3"
+            endingLineNumber = "3"
             landmarkName = "ViewController"
             landmarkType = "3">
             <Locations>
@@ -103,11 +103,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "scaledrone-swift/Scaledrone.swift"
-            timestampString = "524416782.287983"
+            timestampString = "524418395.193959"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "146"
-            endingLineNumber = "146"
+            startingLineNumber = "142"
+            endingLineNumber = "142"
             landmarkName = "convertJSONMessageToDictionary(text:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -119,11 +119,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "scaledrone-swift/Scaledrone.swift"
-            timestampString = "524416554.382856"
+            timestampString = "524418395.193959"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
+            startingLineNumber = "34"
+            endingLineNumber = "34"
             landmarkName = "createCallback(fn:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -135,11 +135,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "scaledrone-swift/Scaledrone.swift"
-            timestampString = "524416554.382856"
+            timestampString = "524418395.193959"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "50"
-            endingLineNumber = "50"
+            startingLineNumber = "52"
+            endingLineNumber = "52"
             landmarkName = "websocketDidConnect(socket:)"
             landmarkType = "7">
             <Locations>
