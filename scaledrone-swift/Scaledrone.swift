@@ -12,11 +12,12 @@ public protocol ScaledroneRoomDelegate: class {
 
 public class Scaledrone: WebSocketDelegate {
     
-    private typealias Callback = () -> Void
+    private typealias Callback = ([String:Any]) -> Void
     
     private let socket = WebSocket(url: URL(string: "ws://localhost:3900/websocket")!)
     private var callbacks:[Int:Callback] = [:]
     private var callbackId:Int = 0
+    public var clientID:String = ""
     
     public weak var delegate: ScaledroneDelegate?
     
@@ -44,7 +45,8 @@ public class Scaledrone: WebSocketDelegate {
         let msg = [
             "action": "handshake",
             "channel": "hDP2vDRHVuX298P5",
-            "callback": createCallback(fn: {
+            "callback": createCallback(fn: { data in
+                self.clientID = data["clientId"] as! String
                 self.delegate?.scaledroneDidConnect(scaledrone: self, error: nil)
             })
         ] as [String : Any]
@@ -63,14 +65,15 @@ public class Scaledrone: WebSocketDelegate {
         print("Received text: \(text)")
         let dic = convertJSONMessageToDictionary(text: text)
         
-        if let cb = dic["callback"] as? Int {
-            if let fn = callbacks[cb] as Callback! {
-                fn()
-            }
+        var data:[String:Any] = [:]
+        if let d = dic["data"] as? [String: Any] {
+            data = d
         }
         
-        if let data = dic["data"] as? [String: Any] {
-            print(data["clientId"]!)
+        if let cb = dic["callback"] as? Int {
+            if let fn = callbacks[cb] as Callback! {
+                fn(data)
+            }
         }
     }
     
@@ -90,6 +93,23 @@ public class Scaledrone: WebSocketDelegate {
         } catch let error {
             print("[WEBSOCKET] Error serializing JSON:\n\(error)")
         }
+    }
+    
+    func subscribe(roomName: String) -> ScaledroneRoom {
+        let room = ScaledroneRoom(name: roomName)
+        return room
+    }
+    
+}
+
+public class ScaledroneRoom {
+    
+    public let name:String
+    
+    public weak var delegate: ScaledroneRoomDelegate?
+    
+    init(name: String) {
+        self.name = name
     }
     
 }

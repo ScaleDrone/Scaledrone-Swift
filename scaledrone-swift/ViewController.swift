@@ -23,7 +23,7 @@ class ViewController: UIViewController, ScaledroneDelegate {
         if (error != nil) {
             print(error!);
         }
-        print("sd open")
+        print("sd open", scaledrone.clientID)
     }
     
     func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {

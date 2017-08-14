@@ -103,27 +103,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "scaledrone-swift/Scaledrone.swift"
-            timestampString = "524414340.264323"
+            timestampString = "524415296.853948"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
-            landmarkName = "websocketDidReceiveMessage(socket:text:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "scaledrone-swift/Scaledrone.swift"
-            timestampString = "524414340.264323"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "101"
-            endingLineNumber = "101"
+            startingLineNumber = "121"
+            endingLineNumber = "121"
             landmarkName = "convertJSONMessageToDictionary(text:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -135,13 +119,61 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "scaledrone-swift/Scaledrone.swift"
-            timestampString = "524414303.61259"
+            timestampString = "524415296.853948"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "30"
-            endingLineNumber = "30"
+            startingLineNumber = "31"
+            endingLineNumber = "31"
             landmarkName = "createCallback(fn:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "scaledrone-swift/Scaledrone.swift"
+            timestampString = "524415025.498579"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "49"
+            endingLineNumber = "49"
+            landmarkName = "websocketDidConnect(socket:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "scaledrone_swift.Scaledrone.websocketDidConnect (socket : Starscream.WebSocket) -&gt; ()"
+                  moduleName = "scaledrone-swift"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/sergeherkul/workspace/scaledrone-swift/scaledrone-swift/Scaledrone.swift"
+                  timestampString = "524415026.26991"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "473">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "scaledrone_swift.Scaledrone.(websocketDidConnect (socket : Starscream.WebSocket) -&gt; ()).(closure #1)"
+                  moduleName = "scaledrone-swift"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/sergeherkul/workspace/scaledrone-swift/scaledrone-swift/Scaledrone.swift"
+                  timestampString = "524415026.27142"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "49"
+                  endingLineNumber = "49"
+                  offsetFromSymbolStart = "189">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
