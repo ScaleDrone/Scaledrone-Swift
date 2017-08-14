@@ -8,15 +8,15 @@
 
 import UIKit
 
-class ViewController: UIViewController, ScaledroneDelegate {
+class ViewController: UIViewController, ScaledroneDelegate, ScaledroneRoomDelegate {
     
-    let sd = Scaledrone()
+    let scaledrone = Scaledrone()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         print("Creating new Scaledrone instance")
-        sd.delegate = self
-        sd.connect()
+        scaledrone.delegate = self
+        scaledrone.connect()
     }
     
     func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?) {
@@ -24,6 +24,8 @@ class ViewController: UIViewController, ScaledroneDelegate {
             print(error!);
         }
         print("sd open", scaledrone.clientID)
+        let room = scaledrone.subscribe(roomName: "notifications")
+        room.delegate = self
     }
     
     func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
@@ -31,5 +33,13 @@ class ViewController: UIViewController, ScaledroneDelegate {
             print(error!);
         }
         print("sd error")
+    }
+    
+    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?) {
+        print("room connected", room)
+    }
+    
+    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: String) {
+        print("received message", message)
     }
 }

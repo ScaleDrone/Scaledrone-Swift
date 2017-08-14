@@ -6,8 +6,8 @@ public protocol ScaledroneDelegate: class {
 }
 
 public protocol ScaledroneRoomDelegate: class {
-    func scaledroneRoomDidConnect(error: NSError?)
-    func scaledroneRoomDidReceiveMessage(message: String)
+    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?)
+    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: String)
 }
 
 public class Scaledrone: WebSocketDelegate {
@@ -17,6 +17,7 @@ public class Scaledrone: WebSocketDelegate {
     private let socket = WebSocket(url: URL(string: "ws://localhost:3900/websocket")!)
     private var callbacks:[Int:Callback] = [:]
     private var callbackId:Int = 0
+    private var rooms:[String:ScaledroneRoom] = [:]
     public var clientID:String = ""
     
     public weak var delegate: ScaledroneDelegate?
@@ -74,6 +75,19 @@ public class Scaledrone: WebSocketDelegate {
             if let fn = callbacks[cb] as Callback! {
                 fn(data)
             }
+            return
+        }
+        
+        if let error = dic["error"] as? String {
+            //delegate?.scaledroneDidReceiveError(scaledrone: <#T##Scaledrone#>, error: NSError?)
+            print("error", error)
+            return
+        }
+        
+        if let roomName = dic["room"] as? String {
+            if let room = rooms[roomName] as ScaledroneRoom? {
+                room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as! String)
+            }
         }
     }
     
@@ -97,6 +111,17 @@ public class Scaledrone: WebSocketDelegate {
     
     func subscribe(roomName: String) -> ScaledroneRoom {
         let room = ScaledroneRoom(name: roomName)
+        rooms[roomName] = room
+        
+        let msg = [
+            "action": "subscribe",
+            "room": roomName,
+            "callback": createCallback(fn: { data in
+                room.delegate?.scaledroneRoomDidConnect(room: room, error: nil)
+            })
+            ] as [String : Any]
+        self.send(msg)
+        
         return room
     }
     
