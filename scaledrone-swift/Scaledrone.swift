@@ -24,7 +24,7 @@ public class Scaledrone: WebSocketDelegate {
     
     public weak var delegate: ScaledroneDelegate?
     
-    init(channelID: String, url: String? = "wss://api2.scaledrone.com/websocket") {
+    public init(channelID: String, url: String? = "wss://api2.scaledrone.com/websocket") {
         self.channelID = channelID
         socket = WebSocket(url: URL(string: url!)!)
     }
