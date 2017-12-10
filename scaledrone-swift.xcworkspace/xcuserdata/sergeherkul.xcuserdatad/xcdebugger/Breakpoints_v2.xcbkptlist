@@ -103,11 +103,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "scaledrone-swift/Scaledrone.swift"
-            timestampString = "524418395.193959"
+            timestampString = "534610448.627398"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "142"
-            endingLineNumber = "142"
+            startingLineNumber = "137"
+            endingLineNumber = "137"
             landmarkName = "convertJSONMessageToDictionary(text:)"
             landmarkType = "9">
          </BreakpointContent>
@@ -126,54 +126,6 @@
             endingLineNumber = "34"
             landmarkName = "createCallback(fn:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "scaledrone-swift/Scaledrone.swift"
-            timestampString = "524418395.193959"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "52"
-            endingLineNumber = "52"
-            landmarkName = "websocketDidConnect(socket:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "scaledrone_swift.Scaledrone.websocketDidConnect (socket : Starscream.WebSocket) -&gt; ()"
-                  moduleName = "scaledrone-swift"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/sergeherkul/workspace/scaledrone-swift/scaledrone-swift/Scaledrone.swift"
-                  timestampString = "524415026.26991"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "49"
-                  endingLineNumber = "49"
-                  offsetFromSymbolStart = "473">
-               </Location>
-               <Location
-                  shouldBeEnabled = "No"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "scaledrone_swift.Scaledrone.(websocketDidConnect (socket : Starscream.WebSocket) -&gt; ()).(closure #1)"
-                  moduleName = "scaledrone-swift"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/sergeherkul/workspace/scaledrone-swift/scaledrone-swift/Scaledrone.swift"
-                  timestampString = "524415026.27142"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "49"
-                  endingLineNumber = "49"
-                  offsetFromSymbolStart = "189">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

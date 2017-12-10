@@ -24,7 +24,7 @@ public class Scaledrone: WebSocketDelegate {
     
     public weak var delegate: ScaledroneDelegate?
     
-    public init(channelID: String, url: String? = "wss://api2.scaledrone.com/websocket") {
+    public init(channelID: String, url: String? = "wss://api.scaledrone.com/v3/websocket") {
         self.channelID = channelID
         socket = WebSocket(url: URL(string: url!)!)
     }
@@ -46,10 +46,10 @@ public class Scaledrone: WebSocketDelegate {
     public func websocketDidConnect(socket: WebSocket) {
         print("websocket is connected")
         let msg = [
-            "action": "handshake",
+            "type": "handshake",
             "channel": self.channelID,
             "callback": createCallback(fn: { data in
-                self.clientID = data["clientId"] as! String
+                self.clientID = data["client_id"] as! String
                 self.delegate?.scaledroneDidConnect(scaledrone: self, error: nil)
             })
         ] as [String : Any]
@@ -63,11 +63,6 @@ public class Scaledrone: WebSocketDelegate {
     public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
         let dic = convertJSONMessageToDictionary(text: text)
         
-        var data:[String:Any] = [:]
-        if let d = dic["data"] as? [String: Any] {
-            data = d
-        }
-        
         if let error = dic["error"] as? String {
             delegate?.scaledroneDidReceiveError(scaledrone: self, error: NSError(domain: "scaledrone.com", code: 0, userInfo: ["error": error]))
             return
@@ -75,7 +70,7 @@ public class Scaledrone: WebSocketDelegate {
         
         if let cb = dic["callback"] as? Int {
             if let fn = callbacks[cb] as Callback! {
-                fn(data)
+                fn(dic)
             }
             return
         }
@@ -110,7 +105,7 @@ public class Scaledrone: WebSocketDelegate {
         rooms[roomName] = room
         
         let msg = [
-            "action": "subscribe",
+            "type": "subscribe",
             "room": roomName,
             "callback": createCallback(fn: { data in
                 room.delegate?.scaledroneRoomDidConnect(room: room, error: nil)
