@@ -36,7 +36,6 @@ public class Scaledrone: WebSocketDelegate {
     }
     
     public func connect() {
-        print("connecting")
         socket.delegate = self
         socket.connect()
     }
