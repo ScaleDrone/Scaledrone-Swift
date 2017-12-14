@@ -6,6 +6,10 @@ public protocol ScaledroneDelegate: class {
     func scaledroneDidDisconnect(scaledrone: Scaledrone, error: NSError?)
 }
 
+public protocol ScaledroneAuthenticateDelegate: class {
+    func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: NSError?)
+}
+
 public protocol ScaledroneRoomDelegate: class {
     func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?)
     func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any)
@@ -23,6 +27,7 @@ public class Scaledrone: WebSocketDelegate {
     public var clientID:String = ""
     
     public weak var delegate: ScaledroneDelegate?
+    public weak var authenticateDelegate: ScaledroneAuthenticateDelegate?
     
     public init(channelID: String, url: String? = "wss://api.scaledrone.com/v3/websocket") {
         self.channelID = channelID
@@ -40,6 +45,17 @@ public class Scaledrone: WebSocketDelegate {
         socket.connect()
     }
     
+    public func authenticate(jwt: String) {
+        let msg = [
+            "type": "authenticate",
+            "token": jwt,
+            "callback": createCallback(fn: { data in
+                self.authenticateDelegate?.scaledroneDidAuthenticate(scaledrone: self, error: data["error"] as? NSError)
+            })
+            ] as [String : Any]
+        self.send(msg)
+    }
+    
     public func publish(message: Any, room: String) {
         let msg = [
             "type": "publish",
@@ -52,13 +68,12 @@ public class Scaledrone: WebSocketDelegate {
     // MARK: Websocket Delegate Methods.
     
     public func websocketDidConnect(socket: WebSocket) {
-        print("websocket is connected")
         let msg = [
             "type": "handshake",
             "channel": self.channelID,
             "callback": createCallback(fn: { data in
                 self.clientID = data["client_id"] as! String
-                self.delegate?.scaledroneDidConnect(scaledrone: self, error: nil)
+                self.delegate?.scaledroneDidConnect(scaledrone: self, error: data["error"] as? NSError)
             })
         ] as [String : Any]
         self.send(msg)
@@ -69,17 +84,21 @@ public class Scaledrone: WebSocketDelegate {
     }
     
     public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
-        let dic = convertJSONMessageToDictionary(text: text)
+        var dic = convertJSONMessageToDictionary(text: text)
         
         if let error = dic["error"] as? String {
-            delegate?.scaledroneDidReceiveError(scaledrone: self, error: NSError(domain: "scaledrone.com", code: 0, userInfo: ["error": error]))
-            return
+            dic["error"] = NSError(domain: "scaledrone.com", code: 0, userInfo: ["error": error])
         }
         
         if let cb = dic["callback"] as? Int {
             if let fn = callbacks[cb] as Callback! {
                 fn(dic)
             }
+            return
+        }
+        
+        if let error = dic["error"] as? NSError {
+            delegate?.scaledroneDidReceiveError(scaledrone: self, error: error)
             return
         }
         
