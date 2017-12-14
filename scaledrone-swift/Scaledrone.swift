@@ -8,7 +8,7 @@ public protocol ScaledroneDelegate: class {
 
 public protocol ScaledroneRoomDelegate: class {
     func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?)
-    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: String)
+    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any)
 }
 
 public class Scaledrone: WebSocketDelegate {
@@ -85,7 +85,7 @@ public class Scaledrone: WebSocketDelegate {
         
         if let roomName = dic["room"] as? String {
             if let room = rooms[roomName] as ScaledroneRoom? {
-                room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as! String)
+                room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as Any)
             }
         }
     }
