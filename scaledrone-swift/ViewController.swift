@@ -29,6 +29,10 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneRoomDelega
     
     func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?) {
         print("Scaledrone connected to room", room.name)
+        scaledrone.publish(message: "Hello from Swift", room: room.name)
+
+        room.publish(message: ["foo": "bar", "1": 1])
+        room.publish(message: [1, 2, 3])
     }
     
     func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: String) {

@@ -41,6 +41,15 @@ public class Scaledrone: WebSocketDelegate {
         socket.connect()
     }
     
+    public func publish(message: Any, room: String) {
+        let msg = [
+            "type": "publish",
+            "room": room,
+            "message": message,
+            ] as [String : Any]
+        self.send(msg)
+    }
+    
     // MARK: Websocket Delegate Methods.
     
     public func websocketDidConnect(socket: WebSocket) {
@@ -101,7 +110,7 @@ public class Scaledrone: WebSocketDelegate {
     }
     
     public func subscribe(roomName: String) -> ScaledroneRoom {
-        let room = ScaledroneRoom(name: roomName)
+        let room = ScaledroneRoom(name: roomName, scaledrone: self)
         rooms[roomName] = room
         
         let msg = [
@@ -125,11 +134,17 @@ public class Scaledrone: WebSocketDelegate {
 public class ScaledroneRoom {
     
     public let name:String
+    public let scaledrone:Scaledrone
     
     public weak var delegate: ScaledroneRoomDelegate?
     
-    init(name: String) {
+    init(name: String, scaledrone: Scaledrone) {
         self.name = name
+        self.scaledrone = scaledrone
+    }
+    
+    public func publish(message: Any) {
+        scaledrone.publish(message: message, room: self.name)
     }
     
 }
