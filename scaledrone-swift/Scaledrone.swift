@@ -15,6 +15,12 @@ public protocol ScaledroneRoomDelegate: class {
     func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any)
 }
 
+public protocol ScaledroneObservableRoomDelegate: class {
+    func scaledroneObservableRoomDidConnect(members: [ScaledroneMember])
+    func scaledroneObservableRoomMemberDidJoin(member: ScaledroneMember)
+    func scaledroneObservableRoomMemberDidLeave(member: ScaledroneMember)
+}
+
 public class Scaledrone: WebSocketDelegate {
     
     private typealias Callback = ([String:Any]) -> Void
@@ -24,13 +30,15 @@ public class Scaledrone: WebSocketDelegate {
     private var callbackId:Int = 0
     private var rooms:[String:ScaledroneRoom] = [:]
     private let channelID:String
+    private var data:Any?
     public var clientID:String = ""
     
     public weak var delegate: ScaledroneDelegate?
     public weak var authenticateDelegate: ScaledroneAuthenticateDelegate?
     
-    public init(channelID: String, url: String? = "wss://api.scaledrone.com/v3/websocket") {
+    public init(channelID: String, url: String? = "wss://api.scaledrone.com/v3/websocket", data: Any?) {
         self.channelID = channelID
+        self.data = data
         socket = WebSocket(url: URL(string: url!)!)
     }
     
@@ -68,7 +76,7 @@ public class Scaledrone: WebSocketDelegate {
     // MARK: Websocket Delegate Methods.
     
     public func websocketDidConnect(socket: WebSocket) {
-        let msg = [
+        var msg = [
             "type": "handshake",
             "channel": self.channelID,
             "callback": createCallback(fn: { data in
@@ -76,6 +84,9 @@ public class Scaledrone: WebSocketDelegate {
                 self.delegate?.scaledroneDidConnect(scaledrone: self, error: data["error"] as? NSError)
             })
         ] as [String : Any]
+        if (self.data != nil) {
+            msg["client_data"] = self.data
+        }
         self.send(msg)
     }
     
@@ -102,9 +113,23 @@ public class Scaledrone: WebSocketDelegate {
             return
         }
         
-        if let roomName = dic["room"] as? String {
-            if let room = rooms[roomName] as ScaledroneRoom? {
-                room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as Any)
+        
+        if let type = dic["type"] as? String {
+            if let roomName = dic["room"] as? String {
+                if let room = rooms[roomName] as ScaledroneRoom? {
+                    switch type {
+                    case "publish":
+                        room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as Any)
+                    case "observable_members":
+                        room.observableDelegate?.scaledroneObservableRoomDidConnect(members: convertAnyToMembers(any: dic["data"]))
+                    case "observable_member_join":
+                        room.observableDelegate?.scaledroneObservableRoomMemberDidJoin(member: convertAnyToMember(any: dic["data"]))
+                    case "observable_member_leave":
+                        room.observableDelegate?.scaledroneObservableRoomMemberDidLeave(member: convertAnyToMember(any: dic["data"]))
+                    default: break
+                        
+                    }
+                }
             }
         }
     }
@@ -155,6 +180,7 @@ public class ScaledroneRoom {
     public let scaledrone:Scaledrone
     
     public weak var delegate: ScaledroneRoomDelegate?
+    public weak var observableDelegate: ScaledroneObservableRoomDelegate?
     
     init(name: String, scaledrone: Scaledrone) {
         self.name = name
@@ -165,6 +191,22 @@ public class ScaledroneRoom {
         scaledrone.publish(message: message, room: self.name)
     }
     
+}
+
+public class ScaledroneMember {
+    public let id:String
+    public let authData:Any?
+    public let clientData:Any?
+    
+    init(id: String, authData: Any?, clientData: Any?) {
+        self.id = id
+        self.authData = authData
+        self.clientData = clientData
+    }
+    
+    public var description: String {
+        return "Member: \(id) authData: \(authData) clientData: \(clientData)"
+    }
 }
 
 func convertJSONMessageToDictionary(text: String) -> [String: Any] {
@@ -180,4 +222,16 @@ func convertJSONMessageToDictionary(text: String) -> [String: Any] {
         }
     }
     return [:]
+}
+
+func convertAnyToMember(any: Any?) -> ScaledroneMember {
+    let dic = any as! [String : Any]
+    return ScaledroneMember(id: dic["id"] as! String, authData: dic["authData"], clientData: dic["clientData"])
+}
+
+func convertAnyToMembers(any: Any?) -> [ScaledroneMember] {
+    let list = any as! [Any]
+    return list.map({
+        (value: Any) -> ScaledroneMember in return convertAnyToMember(any: value)
+    })
 }

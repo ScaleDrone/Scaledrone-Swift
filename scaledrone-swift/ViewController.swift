@@ -1,8 +1,8 @@
 import UIKit
 
-class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthenticateDelegate, ScaledroneRoomDelegate {
+class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthenticateDelegate, ScaledroneRoomDelegate, ScaledroneObservableRoomDelegate {
 
-    let scaledrone = Scaledrone(channelID: "KtJ2qzn3CF3svSFe")
+    let scaledrone = Scaledrone(channelID: "4cNswoNqM2wVFHPg", data: ["name": "Swift", "color": "#ff0000"])
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -17,8 +17,9 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
         }
         scaledrone.authenticate(jwt: "hello world")
         print("Connected to Scaledrone channel", scaledrone.clientID)
-        let room = scaledrone.subscribe(roomName: "notifications")
+        let room = scaledrone.subscribe(roomName: "observable-room")
         room.delegate = self
+        room.observableDelegate = self
     }
 
     func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
@@ -32,6 +33,8 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
     func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: NSError?) {
         print("Scaledrone authenticated", error ?? "")
     }
+    
+    // Rooms
     
     func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?) {
         print("Scaledrone connected to room", room.name, error ?? "")
@@ -52,4 +55,22 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
             print("Received a string:", message)
         }
     }
+    
+    // Observable rooms
+   
+    func scaledroneObservableRoomDidConnect(members: [ScaledroneMember]) {
+        print("members", members)
+        print(members.map { (m: ScaledroneMember) -> String in
+            return m.id
+        })
+    }
+    
+    func scaledroneObservableRoomMemberDidJoin(member: ScaledroneMember) {
+        print("member joined", member, member.id)
+    }
+    
+    func scaledroneObservableRoomMemberDidLeave(member: ScaledroneMember) {
+        print("member left", member, member.id)
+    }
+    
 }
