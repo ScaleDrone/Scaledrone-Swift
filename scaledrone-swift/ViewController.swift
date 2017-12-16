@@ -58,18 +58,17 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
     
     // Observable rooms
    
-    func scaledroneObservableRoomDidConnect(members: [ScaledroneMember]) {
-        print("members", members)
+    func scaledroneObservableRoomDidConnect(room: ScaledroneRoom, members: [ScaledroneMember]) {
         print(members.map { (m: ScaledroneMember) -> String in
             return m.id
         })
     }
     
-    func scaledroneObservableRoomMemberDidJoin(member: ScaledroneMember) {
+    func scaledroneObservableRoomMemberDidJoin(room: ScaledroneRoom, member: ScaledroneMember) {
         print("member joined", member, member.id)
     }
     
-    func scaledroneObservableRoomMemberDidLeave(member: ScaledroneMember) {
+    func scaledroneObservableRoomMemberDidLeave(room: ScaledroneRoom, member: ScaledroneMember) {
         print("member left", member, member.id)
     }
     

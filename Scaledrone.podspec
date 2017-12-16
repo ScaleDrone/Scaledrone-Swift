@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name             = 'Scaledrone'
-  s.version          = '0.1.1'
-  s.summary          = 'Scaledrone Swift Client (in Alpha stages)'
+  s.version          = '0.2.0'
+  s.summary          = 'Scaledrone Swift Client'
   s.homepage         = 'https://github.com/scaledrone/scaledrone-swift'
   s.license          = 'MIT'
   s.author           = { "Scaledrone" => "info@scaledrone.com" }

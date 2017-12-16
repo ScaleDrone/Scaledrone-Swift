@@ -16,9 +16,9 @@ public protocol ScaledroneRoomDelegate: class {
 }
 
 public protocol ScaledroneObservableRoomDelegate: class {
-    func scaledroneObservableRoomDidConnect(members: [ScaledroneMember])
-    func scaledroneObservableRoomMemberDidJoin(member: ScaledroneMember)
-    func scaledroneObservableRoomMemberDidLeave(member: ScaledroneMember)
+    func scaledroneObservableRoomDidConnect(room: ScaledroneRoom, members: [ScaledroneMember])
+    func scaledroneObservableRoomMemberDidJoin(room: ScaledroneRoom, member: ScaledroneMember)
+    func scaledroneObservableRoomMemberDidLeave(room: ScaledroneRoom, member: ScaledroneMember)
 }
 
 public class Scaledrone: WebSocketDelegate {
@@ -121,11 +121,11 @@ public class Scaledrone: WebSocketDelegate {
                     case "publish":
                         room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as Any)
                     case "observable_members":
-                        room.observableDelegate?.scaledroneObservableRoomDidConnect(members: convertAnyToMembers(any: dic["data"]))
+                        room.observableDelegate?.scaledroneObservableRoomDidConnect(room: room, members: convertAnyToMembers(any: dic["data"]))
                     case "observable_member_join":
-                        room.observableDelegate?.scaledroneObservableRoomMemberDidJoin(member: convertAnyToMember(any: dic["data"]))
+                        room.observableDelegate?.scaledroneObservableRoomMemberDidJoin(room: room, member: convertAnyToMember(any: dic["data"]))
                     case "observable_member_leave":
-                        room.observableDelegate?.scaledroneObservableRoomMemberDidLeave(member: convertAnyToMember(any: dic["data"]))
+                        room.observableDelegate?.scaledroneObservableRoomMemberDidLeave(room: room, member: convertAnyToMember(any: dic["data"]))
                     default: break
                         
                     }
