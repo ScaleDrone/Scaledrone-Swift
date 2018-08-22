@@ -59,8 +59,8 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
     // Observable rooms
    
     func scaledroneObservableRoomDidConnect(room: ScaledroneRoom, members: [ScaledroneMember]) {
-        print(members.map { (m: ScaledroneMember) -> String in
-            return m.id
+        print(members.map { (m: ScaledroneMember) -> Any? in
+            return m.clientData
         })
     }
     

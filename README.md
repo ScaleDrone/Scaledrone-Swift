@@ -127,6 +127,50 @@ func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any) {
 
 ## Observable rooms
 
+Observable rooms act like regular rooms but provide additional functionality for keeping track of connected members and linking messages to members.
+
+### Adding data to the member object
+
+Observable rooms allow adding custom data to a connected user. The data can be added in two ways:
+
+1. Passing the data object to a new instance of Scaledrone in your Swift code.
+```swift
+let scaledrone = Scaledrone(channelID: "<channel_id>", data: ["name": "Swift", "color": "#ff0000"])
+```
+This data can later be accessed like so:
+```swift
+func scaledroneObservableRoomMemberDidJoin(room: ScaledroneRoom, member: ScaledroneMember) {
+    print("member joined with clientData", member.clientData)
+}
+```
+
+2. Adding the data to the JSON Web Token as the `data` clause during [authentication](https://www.scaledrone.com/docs/jwt-authentication). This method is safer as the user has no way of changing the data on the client side.
+```json
+{
+  "client": "client_id_sent_from_javascript_client",
+  "channel": "channel_id",
+  "data": {
+    "name": "Swift",
+    "color": "#ff0000"
+  },
+  "permissions": {
+    "^main-room$": {
+      "publish": false,
+      "subscribe": false
+    }
+  },
+  "exp": 1408639878000
+}
+```
+This data can later be accessed like so:
+```swift
+func scaledroneObservableRoomMemberDidJoin(room: ScaledroneRoom, member: ScaledroneMember) {
+    print("member joined with authData", member.authData)
+}
+```
+
+### Receiving the observable events
+
 Implement the **`ScaledroneObservableRoomDelegate`** protocol, then set additional delegation.
 
 > Observable room names need to be prefixed with *observable-*
