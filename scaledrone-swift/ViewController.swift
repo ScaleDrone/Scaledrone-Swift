@@ -20,6 +20,9 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
         let room = scaledrone.subscribe(roomName: "observable-room")
         room.delegate = self
         room.observableDelegate = self
+        let room2 = scaledrone.subscribe(roomName: "myroom")
+        room2.delegate = self
+        room2.observableDelegate = self
     }
 
     func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
@@ -44,7 +47,10 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
         room.publish(message: [1, 2, 3])
     }
 
-    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any) {
+    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any, member: ScaledroneMember?) {
+        if member != nil {
+            print("Received message from member:", member?.description)
+        }
         if let message = message as? [String : Any] {
             print("Received a dictionary:", message)
         }

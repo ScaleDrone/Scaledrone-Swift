@@ -111,8 +111,15 @@ func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?) {
 
 #### scaledroneRoomDidReceiveMessage
 
+The `member` argument exists when the message was sent to an [observable room](#observable-rooms) using the socket API (not the REST API).
+
 ```swift
-func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any) {
+func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any, member: ScaledroneMember?) {
+    if member != nil {
+        // This message was sent to an observable room
+        // This message was sent through the socket API, not the REST API
+        print("Received message from member:", member?.description)
+    }
     if let message = message as? [String : Any] {
         print("Received a dictionary:", message)
     }

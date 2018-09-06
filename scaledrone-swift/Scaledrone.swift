@@ -12,7 +12,7 @@ public protocol ScaledroneAuthenticateDelegate: class {
 
 public protocol ScaledroneRoomDelegate: class {
     func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?)
-    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any)
+    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any, member: ScaledroneMember?)
 }
 
 public protocol ScaledroneObservableRoomDelegate: class {
@@ -119,13 +119,23 @@ public class Scaledrone: WebSocketDelegate {
                 if let room = rooms[roomName] as ScaledroneRoom? {
                     switch type {
                     case "publish":
-                        room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as Any)
+                        var member:ScaledroneMember?
+                        if let clientID = dic["client_id"] as? String {
+                            member = room.members.first(where: {$0.id == clientID})
+                        }
+                        room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as Any, member: member)
                     case "observable_members":
-                        room.observableDelegate?.scaledroneObservableRoomDidConnect(room: room, members: convertAnyToMembers(any: dic["data"]))
+                        let members = convertAnyToMembers(any: dic["data"])
+                        room.members = members
+                        room.observableDelegate?.scaledroneObservableRoomDidConnect(room: room, members: members)
                     case "observable_member_join":
-                        room.observableDelegate?.scaledroneObservableRoomMemberDidJoin(room: room, member: convertAnyToMember(any: dic["data"]))
+                        let member = convertAnyToMember(any: dic["data"])
+                        room.members.append(member)
+                        room.observableDelegate?.scaledroneObservableRoomMemberDidJoin(room: room, member: member)
                     case "observable_member_leave":
-                        room.observableDelegate?.scaledroneObservableRoomMemberDidLeave(room: room, member: convertAnyToMember(any: dic["data"]))
+                        let member = convertAnyToMember(any: dic["data"])
+                        room.members = room.members.filter { $0.id != member.id }
+                        room.observableDelegate?.scaledroneObservableRoomMemberDidLeave(room: room, member: member)
                     default: break
                         
                     }
@@ -178,6 +188,7 @@ public class ScaledroneRoom {
     
     public let name:String
     public let scaledrone:Scaledrone
+    public var members: [ScaledroneMember]
     
     public weak var delegate: ScaledroneRoomDelegate?
     public weak var observableDelegate: ScaledroneObservableRoomDelegate?
@@ -185,6 +196,7 @@ public class ScaledroneRoom {
     init(name: String, scaledrone: Scaledrone) {
         self.name = name
         self.scaledrone = scaledrone
+        self.members = []
     }
     
     public func publish(message: Any) {
