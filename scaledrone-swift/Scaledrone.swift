@@ -33,6 +33,10 @@ public class Scaledrone: WebSocketDelegate {
     private var data:Any?
     public var clientID:String = ""
     
+    private typealias RoomName = String
+    private var nextHistoryIndex: [RoomName: Int] = [:]
+    private var pendingHistoryMessages: [RoomName: [[String: Any]]] = [:]
+    
     public weak var delegate: ScaledroneDelegate?
     public weak var authenticateDelegate: ScaledroneAuthenticateDelegate?
     
@@ -83,7 +87,7 @@ public class Scaledrone: WebSocketDelegate {
                 self.clientID = data["client_id"] as! String
                 self.delegate?.scaledroneDidConnect(scaledrone: self, error: data["error"] as? NSError)
             })
-        ] as [String : Any]
+            ] as [String : Any]
         if (self.data != nil) {
             msg["client_data"] = self.data
         }
@@ -102,7 +106,7 @@ public class Scaledrone: WebSocketDelegate {
         }
         
         if let cb = dic["callback"] as? Int {
-            if let fn = callbacks[cb] as Callback! {
+            if let fn = callbacks[cb] {
                 fn(dic)
             }
             return
@@ -119,11 +123,7 @@ public class Scaledrone: WebSocketDelegate {
                 if let room = rooms[roomName] as ScaledroneRoom? {
                     switch type {
                     case "publish":
-                        var member:ScaledroneMember?
-                        if let clientID = dic["client_id"] as? String {
-                            member = room.members.first(where: {$0.id == clientID})
-                        }
-                        room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: dic["message"] as Any, member: member)
+                        delegatePublishMessage(room: room, messageDic: dic)
                     case "observable_members":
                         let members = convertAnyToMembers(any: dic["data"])
                         room.members = members
@@ -136,12 +136,45 @@ public class Scaledrone: WebSocketDelegate {
                         let member = convertAnyToMember(any: dic["data"])
                         room.members = room.members.filter { $0.id != member.id }
                         room.observableDelegate?.scaledroneObservableRoomMemberDidLeave(room: room, member: member)
+                    case "history_message":
+                        handleHistoryMessage(room: room, messageDic: dic)
                     default: break
-                        
                     }
                 }
             }
         }
+    }
+    
+    /// Notifies the delegate of new message history type messages in their correct order.
+    private func handleHistoryMessage(room: ScaledroneRoom, messageDic: [String: Any]) {
+        guard pendingHistoryMessages[room.name] != nil &&
+            nextHistoryIndex[room.name] != nil else {
+                return
+        }
+        
+        pendingHistoryMessages[room.name]?.append(messageDic)
+        
+        func findPendingMessage(withIndex index: Int)->  Int? {
+            let pendingMessages = pendingHistoryMessages[room.name]!
+            return pendingMessages.firstIndex(where: { messageDic in
+                messageDic["index"] as? Int == index
+            })
+        }
+        
+        while let pendingIndex = findPendingMessage(withIndex: nextHistoryIndex[room.name]!) {
+            nextHistoryIndex[room.name]! += 1
+            let pending = pendingHistoryMessages[room.name]!.remove(at: pendingIndex)
+            delegatePublishMessage(room: room, messageDic: pending)
+        }
+    }
+    
+    /// Notifies the delegate of a newly arrived publish type message.
+    private func delegatePublishMessage(room: ScaledroneRoom, messageDic: [String: Any]) {
+        var member:ScaledroneMember?
+        if let clientID = messageDic["client_id"] as? String {
+            member = room.members.first(where: {$0.id == clientID})
+        }
+        room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: messageDic["message"] as Any, member: member)
     }
     
     public func websocketDidReceiveData(socket: WebSocket, data: Data) {
@@ -162,7 +195,7 @@ public class Scaledrone: WebSocketDelegate {
         }
     }
     
-    public func subscribe(roomName: String) -> ScaledroneRoom {
+    public func subscribe(roomName: String, messageHistory: Int = 0) -> ScaledroneRoom {
         let room = ScaledroneRoom(name: roomName, scaledrone: self)
         rooms[roomName] = room
         
@@ -171,9 +204,16 @@ public class Scaledrone: WebSocketDelegate {
             "room": roomName,
             "callback": createCallback(fn: { data in
                 room.delegate?.scaledroneRoomDidConnect(room: room, error: nil)
-            })
+            }),
+            "history_count": messageHistory,
+            "history": messageHistory
             ] as [String : Any]
         self.send(msg)
+        
+        if messageHistory > 0 {
+            nextHistoryIndex[room.name] = 0
+            pendingHistoryMessages[room.name] = []
+        }
         
         return room
     }
@@ -217,7 +257,7 @@ public class ScaledroneMember {
     }
     
     public var description: String {
-        return "Member: \(id) authData: \(authData) clientData: \(clientData)"
+        return "Member: \(id) authData: \(authData ?? "nil") clientData: \(clientData ?? "nil")"
     }
 }
 
