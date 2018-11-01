@@ -103,7 +103,6 @@
 				B6F3B83E1F3F69CE0063002B /* Frameworks */,
 				B6F3B83F1F3F69CE0063002B /* Resources */,
 				4CDEEF13A8ED0579CAEA2047 /* [CP] Embed Pods Frameworks */,
-				9B4B9170C983381489590CC0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -196,21 +195,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-scaledrone-swift/Pods-scaledrone-swift-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9B4B9170C983381489590CC0 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-scaledrone-swift/Pods-scaledrone-swift-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
