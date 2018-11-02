@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name             = 'Scaledrone'
-  s.version          = '0.3.0'
+  s.version          = '0.4.0'
   s.summary          = 'Scaledrone Swift Client'
   s.homepage         = 'https://github.com/scaledrone/scaledrone-swift'
   s.license          = 'MIT'
