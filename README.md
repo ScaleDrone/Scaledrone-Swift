@@ -212,6 +212,17 @@ func scaledroneObservableRoomMemberDidLeave(room: ScaledroneRoom, member: Scaled
 }
 ```
 
+## Message History
+
+When creating a Scaledrone room you can supply the number of messages to recieve from that room's history. The messages will arrive, in reverse chronological order and one by one, in `scaledroneRoomDidReceiveMessage`, just like real-time messages.
+
+In order to recieve message history messages, this feature needs to be enabled in the [Scaledrone dashboard](http://dashboard.scaledrone.com). You can learn more about Message History and its limitations in [Scaledrone docs](https://www.scaledrone.com/docs/message-history).
+
+```
+let room = scaledrone.subscribe(roomName: "chat-room", messageHistory: 50)
+```
+
+
 ## Basic Example
 ```swift
 import UIKit
