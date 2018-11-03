@@ -13,7 +13,7 @@ Check out [Get Started](http://cocoapods.org/) tab on [cocoapods.org](http://coc
 
 To use Scaledrone in your project add the following 'Podfile' to your project
 ```ruby
-pod 'Scaledrone', '~> 0.2.0'
+pod 'Scaledrone', '~> 0.4.0'
 ```
 
 Then run:
