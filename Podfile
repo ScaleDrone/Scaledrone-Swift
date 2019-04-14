@@ -6,5 +6,5 @@ target 'scaledrone-swift' do
   use_frameworks!
 
   # Pods for scaledrone-swift
-  pod 'Starscream', '~> 2.1.1'
+  pod 'Starscream', '~> 3.1.0'
 end
