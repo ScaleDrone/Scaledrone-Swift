@@ -11,7 +11,7 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
         scaledrone.connect()
     }
 
-    func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?) {
+    func scaledroneDidConnect(scaledrone: Scaledrone, error: Error?) {
         if (error != nil) {
             print(error!);
         }
@@ -25,21 +25,21 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
         room2.observableDelegate = self
     }
 
-    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
+    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: Error?) {
         print("Scaledrone error", error ?? "")
     }
 
-    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: NSError?) {
+    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: Error?) {
         print("Scaledrone disconnected", error ?? "")
     }
 
-    func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: NSError?) {
+    func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: Error?) {
         print("Scaledrone authenticated", error ?? "")
     }
     
     // Rooms
     
-    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?) {
+    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: Error?) {
         print("Scaledrone connected to room", room.name, error ?? "")
         scaledrone.publish(message: "Hello from Swift", room: room.name)
 
@@ -49,7 +49,7 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneAuthentica
 
     func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any, member: ScaledroneMember?) {
         if member != nil {
-            print("Received message from member:", member?.description)
+            print("Received message from member:", member?.description ?? "")
         }
         if let message = message as? [String : Any] {
             print("Received a dictionary:", message)

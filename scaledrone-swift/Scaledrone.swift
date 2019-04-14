@@ -1,17 +1,17 @@
 import Starscream
 
 public protocol ScaledroneDelegate: class {
-    func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?)
-    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?)
-    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: NSError?)
+    func scaledroneDidConnect(scaledrone: Scaledrone, error: Error?)
+    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: Error?)
+    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: Error?)
 }
 
 public protocol ScaledroneAuthenticateDelegate: class {
-    func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: NSError?)
+    func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: Error?)
 }
 
 public protocol ScaledroneRoomDelegate: class {
-    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?)
+    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: Error?)
     func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any, member: ScaledroneMember?)
 }
 
@@ -25,13 +25,13 @@ public class Scaledrone: WebSocketDelegate {
     
     private typealias Callback = ([String:Any]) -> Void
     
-    private let socket:WebSocket
-    private var callbacks:[Int:Callback] = [:]
-    private var callbackId:Int = 0
-    private var rooms:[String:ScaledroneRoom] = [:]
-    private let channelID:String
-    private var data:Any?
-    public var clientID:String = ""
+    private let socket: WebSocket
+    private var callbacks: [Int: Callback] = [:]
+    private var callbackId: Int = 0
+    private var rooms: [String: ScaledroneRoom] = [:]
+    private let channelID: String
+    private var data: Any?
+    public var clientID: String = ""
     
     private typealias RoomName = String
     private var nextHistoryIndex: [RoomName: Int] = [:]
@@ -79,7 +79,7 @@ public class Scaledrone: WebSocketDelegate {
     
     // MARK: Websocket Delegate Methods.
     
-    public func websocketDidConnect(socket: WebSocket) {
+    public func websocketDidConnect(socket: WebSocketClient) {
         var msg = [
             "type": "handshake",
             "channel": self.channelID,
@@ -94,11 +94,11 @@ public class Scaledrone: WebSocketDelegate {
         self.send(msg)
     }
     
-    public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
+    public func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
         delegate?.scaledroneDidDisconnect(scaledrone: self, error: error)
     }
     
-    public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
+    public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
         var dic = convertJSONMessageToDictionary(text: text)
         
         if let error = dic["error"] as? String {
@@ -177,7 +177,7 @@ public class Scaledrone: WebSocketDelegate {
         room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: messageDic["message"] as Any, member: member)
     }
     
-    public func websocketDidReceiveData(socket: WebSocket, data: Data) {
+    public func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
         print("Should not have received any data: \(data.count)")
     }
     
