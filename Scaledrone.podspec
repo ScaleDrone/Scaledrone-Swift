@@ -13,5 +13,5 @@ Pod::Spec.new do |s|
   s.osx.deployment_target = '10.10'
   s.tvos.deployment_target = '9.0'
 
-  s.dependency "Starscream", "~> 2.1.1"
+  s.dependency "Starscream", "~> 3.1.0"
 end
