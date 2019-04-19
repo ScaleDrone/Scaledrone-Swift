@@ -12,8 +12,9 @@ This project is still a work in progress, pull requests and issues are very welc
 Check out [Get Started](http://cocoapods.org/) tab on [cocoapods.org](http://cocoapods.org/).
 
 To use Scaledrone in your project add the following 'Podfile' to your project
+
 ```ruby
-pod 'Scaledrone', '~> 0.4.0'
+pod 'Scaledrone', '~> 0.5.0'
 ```
 
 Then run:
@@ -42,7 +43,7 @@ After you are connected, there are some delegate methods that we need to impleme
 #### scaledroneDidConnect
 
 ```swift
-func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?) {
+func scaledroneDidConnect(scaledrone: Scaledrone, error: Error?) {
     print("Connected to Scaledrone")
 }
 ```
@@ -50,7 +51,7 @@ func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?) {
 #### scaledroneDidReceiveError
 
 ```swift
-func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
+func scaledroneDidReceiveError(scaledrone: Scaledrone, error: Error?) {
     print("Scaledrone error", error ?? "")
 }
 ```
@@ -58,7 +59,7 @@ func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
 #### scaledroneDidDisconnect
 
 ```swift
-func scaledroneDidDisconnect(scaledrone: Scaledrone, error: NSError?) {
+func scaledroneDidDisconnect(scaledrone: Scaledrone, error: Error?) {
     print("Scaledrone disconnected", error ?? "")
 }
 ```
@@ -79,7 +80,7 @@ scaledrone.authenticate(jwt: "jwt_string")
 #### scaledroneDidAuthenticate
 
 ```swift
-func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: NSError?) {
+func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: Error?) {
     print("Scaledrone authenticated", error ?? "")
 }
 ```
@@ -104,7 +105,7 @@ room.delegate = self
 #### scaledroneRoomDidConnect
 
 ```swift
-func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?) {
+func scaledroneRoomDidConnect(room: ScaledroneRoom, error: Error?) {
     print("Scaledrone connected to room", room.name, error ?? "")
 }
 ```
@@ -237,21 +238,21 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneRoomDelega
         scaledrone.connect()
     }
 
-    func scaledroneDidConnect(scaledrone: Scaledrone, error: NSError?) {
+    func scaledroneDidConnect(scaledrone: Scaledrone, error: Error?) {
         print("Connected to Scaledrone channel", scaledrone.clientID)
         let room = scaledrone.subscribe(roomName: "notifications")
         room.delegate = self
     }
 
-    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: NSError?) {
+    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: Error?) {
         print("Scaledrone error")
     }
 
-    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: NSError?) {
+    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: Error?) {
         print("Scaledrone disconnected")
     }
 
-    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: NSError?) {
+    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: Error?) {
         print("Scaledrone connected to room", room.name)
     }
 
@@ -262,6 +263,10 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneRoomDelega
 ```
 
 For a longer example see the `ViewController.swift` file.
+
+## Migration notes for Scaledrone 0.5.0:
+
+Scaledrone 0.5.0 removes the use of `NSError` in favor of `Error` in the delegate methods, and adds support for Swift 5.
 
 ## Todo:
 
