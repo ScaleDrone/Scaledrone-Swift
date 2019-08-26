@@ -79,7 +79,7 @@ public class Scaledrone: WebSocketDelegate {
     
     // MARK: Websocket Delegate Methods.
     
-    public func websocketDidConnect(socket: WebSocketClient) {
+    public func websocketDidConnect(socket: WebSocket) {
         var msg = [
             "type": "handshake",
             "channel": self.channelID,
@@ -94,11 +94,11 @@ public class Scaledrone: WebSocketDelegate {
         self.send(msg)
     }
     
-    public func websocketDidDisconnect(socket: WebSocketClient, error: Error?) {
+    public func websocketDidDisconnect(socket: WebSocket, error: NSError?) {
         delegate?.scaledroneDidDisconnect(scaledrone: self, error: error)
     }
     
-    public func websocketDidReceiveMessage(socket: WebSocketClient, text: String) {
+    public func websocketDidReceiveMessage(socket: WebSocket, text: String) {
         var dic = convertJSONMessageToDictionary(text: text)
         
         if let error = dic["error"] as? String {
@@ -177,7 +177,7 @@ public class Scaledrone: WebSocketDelegate {
         room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: messageDic["message"] as Any, member: member)
     }
     
-    public func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
+    public func websocketDidReceiveData(socket: WebSocket, data: Data) {
         print("Should not have received any data: \(data.count)")
     }
     
