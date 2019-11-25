@@ -1,0 +1,6 @@
+use_frameworks!
+target 'Scaledrone_Tests' do
+  pod 'Scaledrone', :path => '../'
+  
+  
+end
