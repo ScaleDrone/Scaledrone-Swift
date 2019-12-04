@@ -22,6 +22,24 @@ Then run:
 pod install
 ```
 
+### Carthage
+
+Check out [the Carthage Quick Start instructions](https://github.com/Carthage/Carthage#quick-start).
+
+To use Scaledrone with Carthage, add the following to your Cartfile:
+
+```ruby
+github "ScaleDrone/Scaledrone-Swift"
+```
+
+Then run:
+
+```
+carthage update
+```
+
+After that, follow the [instructions on Carthage's docs](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
+
 ## Usage
 
 First thing is to import the framework. See the Installation instructions on how to add the framework to your project.

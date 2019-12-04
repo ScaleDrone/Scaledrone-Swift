@@ -1,0 +1,23 @@
+PODS:
+  - Scaledrone (0.5.0):
+    - Starscream (~> 3.1.0)
+  - Starscream (3.1.1)
+
+DEPENDENCIES:
+  - Scaledrone (from `../`)
+
+SPEC REPOS:
+  trunk:
+    - Starscream
+
+EXTERNAL SOURCES:
+  Scaledrone:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  Scaledrone: 0def0ac1d13dddd8607ebff9e8d64ea9ea59ef91
+  Starscream: 4bb2f9942274833f7b4d296a55504dcfc7edb7b0
+
+PODFILE CHECKSUM: ee128188b1733c7d7c4061b3f79ae4ff03979fed
+
+COCOAPODS: 1.8.4
