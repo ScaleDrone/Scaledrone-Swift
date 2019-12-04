@@ -1,29 +1,291 @@
-# Scaledrone
+# [Scaledrone](https://www.scaledrone.com/) Swift
 
-[![CI Status](https://img.shields.io/travis/marinbenc/Scaledrone.svg?style=flat)](https://travis-ci.org/marinbenc/Scaledrone)
-[![Version](https://img.shields.io/cocoapods/v/Scaledrone.svg?style=flat)](https://cocoapods.org/pods/Scaledrone)
-[![License](https://img.shields.io/cocoapods/l/Scaledrone.svg?style=flat)](https://cocoapods.org/pods/Scaledrone)
-[![Platform](https://img.shields.io/cocoapods/p/Scaledrone.svg?style=flat)](https://cocoapods.org/pods/Scaledrone)
+> Use the Scaledrone Swift client to connect to the Scaledrone realtime messaging service
 
-## Example
+This project is still a work in progress, pull requests and issues are very welcome.
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-## Requirements
 
 ## Installation
 
-Scaledrone is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+### CocoaPods
+
+Check out [Get Started](http://cocoapods.org/) tab on [cocoapods.org](http://cocoapods.org/).
+
+To use Scaledrone in your project add the following 'Podfile' to your project
 
 ```ruby
-pod 'Scaledrone'
+pod 'Scaledrone', '~> 0.5.0'
 ```
 
-## Author
+Then run:
+```
+pod install
+```
 
-marinbenc, marinbenc@gmail.com
+### Carthage
 
-## License
+Check out [the Carthage Quick Start instructions](https://github.com/Carthage/Carthage#quick-start).
 
-Scaledrone is available under the MIT license. See the LICENSE file for more info.
+To use Scaledrone with Carthage, add the following to your Cartfile:
+
+```ruby
+github "ScaleDrone/Scaledrone-Swift"
+```
+
+Then run:
+
+```
+carthage update
+```
+
+After that, follow the [instructions on Carthage's docs](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
+
+## Usage
+
+First thing is to import the framework. See the Installation instructions on how to add the framework to your project.
+
+```swift
+import Scaledrone
+```
+
+Once imported, you can connect to Scaledrone.
+
+```swift
+scaledrone = Scaledrone(channelID: "your-channel-id")
+scaledrone.delegate = self
+scaledrone.connect()
+```
+
+After you are connected, there are some delegate methods that we need to implement.
+
+#### scaledroneDidConnect
+
+```swift
+func scaledroneDidConnect(scaledrone: Scaledrone, error: Error?) {
+    print("Connected to Scaledrone")
+}
+```
+
+#### scaledroneDidReceiveError
+
+```swift
+func scaledroneDidReceiveError(scaledrone: Scaledrone, error: Error?) {
+    print("Scaledrone error", error ?? "")
+}
+```
+
+#### scaledroneDidDisconnect
+
+```swift
+func scaledroneDidDisconnect(scaledrone: Scaledrone, error: Error?) {
+    print("Scaledrone disconnected", error ?? "")
+}
+```
+
+## Authentication
+
+Implement the **`ScaledroneAuthenticateDelegate`** protocol and set an additional delegate
+```swift
+scaledrone.authenticateDelegate = self
+```
+
+Then use the authenticate method to authenticate using a JWT
+
+```swift
+scaledrone.authenticate(jwt: "jwt_string")
+```
+
+#### scaledroneDidAuthenticate
+
+```swift
+func scaledroneDidAuthenticate(scaledrone: Scaledrone, error: Error?) {
+    print("Scaledrone authenticated", error ?? "")
+}
+```
+
+## Sending messages
+
+```swift
+scaledrone.publish(message: "Hello from Swift", room: "myroom")
+// Or
+room.publish(message: ["foo": "bar", "1": 2])
+```
+
+## Subscribing to messages
+
+Subscribe to a room and implement the **`ScaledroneRoomDelegate`** protocol, then set additional delegation
+
+```swift
+let room = scaledrone.subscribe(roomName: "myroom")
+room.delegate = self
+```
+
+#### scaledroneRoomDidConnect
+
+```swift
+func scaledroneRoomDidConnect(room: ScaledroneRoom, error: Error?) {
+    print("Scaledrone connected to room", room.name, error ?? "")
+}
+```
+
+#### scaledroneRoomDidReceiveMessage
+
+The `member` argument exists when the message was sent to an [observable room](#observable-rooms) using the socket API (not the REST API).
+
+```swift
+func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any, member: ScaledroneMember?) {
+    if member != nil {
+        // This message was sent to an observable room
+        // This message was sent through the socket API, not the REST API
+        print("Received message from member:", member?.description)
+    }
+    if let message = message as? [String : Any] {
+        print("Received a dictionary:", message)
+    }
+    if let message = message as? [Any] {
+        print("Received an array:", message)
+    }
+    if let message = message as? String {
+        print("Received a string:", message)
+    }
+}
+```
+
+## Observable rooms
+
+Observable rooms act like regular rooms but provide additional functionality for keeping track of connected members and linking messages to members.
+
+### Adding data to the member object
+
+Observable rooms allow adding custom data to a connected user. The data can be added in two ways:
+
+1. Passing the data object to a new instance of Scaledrone in your Swift code.
+```swift
+let scaledrone = Scaledrone(channelID: "<channel_id>", data: ["name": "Swift", "color": "#ff0000"])
+```
+This data can later be accessed like so:
+```swift
+func scaledroneObservableRoomMemberDidJoin(room: ScaledroneRoom, member: ScaledroneMember) {
+    print("member joined with clientData", member.clientData)
+}
+```
+
+2. Adding the data to the JSON Web Token as the `data` clause during [authentication](https://www.scaledrone.com/docs/jwt-authentication). This method is safer as the user has no way of changing the data on the client side.
+```json
+{
+  "client": "client_id_sent_from_javascript_client",
+  "channel": "channel_id",
+  "data": {
+    "name": "Swift",
+    "color": "#ff0000"
+  },
+  "permissions": {
+    "^main-room$": {
+      "publish": false,
+      "subscribe": false
+    }
+  },
+  "exp": 1408639878000
+}
+```
+This data can later be accessed like so:
+```swift
+func scaledroneObservableRoomMemberDidJoin(room: ScaledroneRoom, member: ScaledroneMember) {
+    print("member joined with authData", member.authData)
+}
+```
+
+### Receiving the observable events
+
+Implement the **`ScaledroneObservableRoomDelegate`** protocol, then set additional delegation.
+
+> Observable room names need to be prefixed with *observable-*
+
+```swift
+let room = scaledrone.subscribe(roomName: "observable-room")
+room.delegate = self
+room.observableDelegate = self
+```
+
+#### scaledroneObservableRoomDidConnect
+```swift
+func scaledroneObservableRoomDidConnect(room: ScaledroneRoom, members: [ScaledroneMember]) {
+    // The list will contain yourself
+    print(members.map { (m: ScaledroneMember) -> String in
+        return m.id
+    })
+}
+```
+
+#### scaledroneObservableRoomMemberDidJoin
+```swift
+func scaledroneObservableRoomMemberDidJoin(room: ScaledroneRoom, member: ScaledroneMember) {
+    print("member joined", member, member.id)
+}
+```
+
+#### scaledroneObservableRoomMemberDidLeave
+```swift
+func scaledroneObservableRoomMemberDidLeave(room: ScaledroneRoom, member: ScaledroneMember) {
+    print("member left", member, member.id)
+}
+```
+
+## Message History
+
+When creating a Scaledrone room you can supply the number of messages to recieve from that room's history. The messages will arrive, in reverse chronological order and one by one, in `scaledroneRoomDidReceiveMessage`, just like real-time messages.
+
+In order to recieve message history messages, this feature needs to be enabled in the [Scaledrone dashboard](http://dashboard.scaledrone.com). You can learn more about Message History and its limitations in [Scaledrone docs](https://www.scaledrone.com/docs/message-history).
+
+```
+let room = scaledrone.subscribe(roomName: "chat-room", messageHistory: 50)
+```
+
+
+## Basic Example
+```swift
+import UIKit
+
+class ViewController: UIViewController, ScaledroneDelegate, ScaledroneRoomDelegate {
+
+    let scaledrone = Scaledrone(channelID: "your-channel-id")
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        scaledrone.delegate = self
+        scaledrone.connect()
+    }
+
+    func scaledroneDidConnect(scaledrone: Scaledrone, error: Error?) {
+        print("Connected to Scaledrone channel", scaledrone.clientID)
+        let room = scaledrone.subscribe(roomName: "notifications")
+        room.delegate = self
+    }
+
+    func scaledroneDidReceiveError(scaledrone: Scaledrone, error: Error?) {
+        print("Scaledrone error")
+    }
+
+    func scaledroneDidDisconnect(scaledrone: Scaledrone, error: Error?) {
+        print("Scaledrone disconnected")
+    }
+
+    func scaledroneRoomDidConnect(room: ScaledroneRoom, error: Error?) {
+        print("Scaledrone connected to room", room.name)
+    }
+
+    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: String) {
+        print("Room received message:", message)
+    }
+}
+```
+
+For a longer example see the `ViewController.swift` file.
+
+## Migration notes for Scaledrone 0.5.0:
+
+Scaledrone 0.5.0 removes the use of `NSError` in favor of `Error` in the delegate methods, and adds support for Swift 5.
+
+## Todo:
+
+* Automatic reconnection
