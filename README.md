@@ -14,7 +14,7 @@ Check out [Get Started](http://cocoapods.org/) tab on [cocoapods.org](http://coc
 To use Scaledrone in your project add the following 'Podfile' to your project
 
 ```ruby
-pod 'Scaledrone', '~> 0.5.0'
+pod 'Scaledrone', '~> 0.5.2'
 ```
 
 Then run:
@@ -133,20 +133,23 @@ func scaledroneRoomDidConnect(room: ScaledroneRoom, error: Error?) {
 The `member` argument exists when the message was sent to an [observable room](#observable-rooms) using the socket API (not the REST API).
 
 ```swift
-func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any, member: ScaledroneMember?) {
-    if member != nil {
+func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: ScaledroneMessage) {
+    if message.member != nil {
         // This message was sent to an observable room
         // This message was sent through the socket API, not the REST API
-        print("Received message from member:", member?.description)
+        print("Received message from member:", message.memberID as Any)
     }
-    if let message = message as? [String : Any] {
-        print("Received a dictionary:", message)
+    
+    let data = message.data
+    
+    if let messageData = data as? [String: Any] {
+        print("Received a dictionary:", messageData)
     }
-    if let message = message as? [Any] {
-        print("Received an array:", message)
+    if let messageData = data as? [Any] {
+        print("Received an array:", messageData)
     }
-    if let message = message as? String {
-        print("Received a string:", message)
+    if let messageData = data as? String {
+        print("Received a string:", messageData)
     }
 }
 ```
@@ -282,9 +285,15 @@ class ViewController: UIViewController, ScaledroneDelegate, ScaledroneRoomDelega
 
 For a longer example see the `ViewController.swift` file.
 
-## Migration notes for Scaledrone 0.5.0:
+## Migration notes
+
+### 0.5.0
 
 Scaledrone 0.5.0 removes the use of `NSError` in favor of `Error` in the delegate methods, and adds support for Swift 5.
+
+### 0.5.2:
+
+`scaledroneRoomDidReceiveMessage(room:message:member)` was renamed to `scaledroneRoomDidReceiveMessage(room:message:)` and `message` is now of type `ScaledroneMessage` which includes the member and message IDs, the message's time as well as the data that was sent.
 
 ## Todo:
 
