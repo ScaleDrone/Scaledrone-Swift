@@ -12,7 +12,7 @@ public protocol ScaledroneAuthenticateDelegate: class {
 
 public protocol ScaledroneRoomDelegate: class {
     func scaledroneRoomDidConnect(room: ScaledroneRoom, error: Error?)
-    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: Any, member: ScaledroneMember?)
+    func scaledroneRoomDidReceiveMessage(room: ScaledroneRoom, message: ScaledroneMessage)
 }
 
 public protocol ScaledroneObservableRoomDelegate: class {
@@ -170,11 +170,24 @@ public class Scaledrone: WebSocketDelegate {
     
     /// Notifies the delegate of a newly arrived publish type message.
     private func delegatePublishMessage(room: ScaledroneRoom, messageDic: [String: Any]) {
-        var member:ScaledroneMember?
+        var member: ScaledroneMember?
         if let clientID = messageDic["client_id"] as? String {
-            member = room.members.first(where: {$0.id == clientID})
+            member = room.members.first(where: { $0.id == clientID })
         }
-        room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: messageDic["message"] as Any, member: member)
+        
+        var time: Date?
+        if let timestamp = messageDic["timestamp"] as? Int {
+            time = Date(timeIntervalSince1970: TimeInterval(timestamp))
+        }
+        
+        let message = ScaledroneMessage(
+            data: messageDic["message"] as Any,
+            memberID: messageDic["client_id"] as? String,
+            time: time,
+            member: member,
+            messageID: messageDic["id"] as? String)
+        
+        room.delegate?.scaledroneRoomDidReceiveMessage(room: room, message: message)
     }
     
     public func websocketDidReceiveData(socket: WebSocketClient, data: Data) {
@@ -226,8 +239,8 @@ public class Scaledrone: WebSocketDelegate {
 
 public class ScaledroneRoom {
     
-    public let name:String
-    public let scaledrone:Scaledrone
+    public let name: String
+    public let scaledrone: Scaledrone
     public var members: [ScaledroneMember]
     
     public weak var delegate: ScaledroneRoomDelegate?
@@ -246,9 +259,9 @@ public class ScaledroneRoom {
 }
 
 public class ScaledroneMember {
-    public let id:String
-    public let authData:Any?
-    public let clientData:Any?
+    public let id: String
+    public let authData: Any?
+    public let clientData: Any?
     
     init(id: String, authData: Any?, clientData: Any?) {
         self.id = id
@@ -259,6 +272,14 @@ public class ScaledroneMember {
     public var description: String {
         return "Member: \(id) authData: \(authData ?? "nil") clientData: \(clientData ?? "nil")"
     }
+}
+
+public struct ScaledroneMessage {
+  public let data: Any
+  public let memberID: String?
+  public let time: Date?
+  public let member: ScaledroneMember?
+  public let messageID: String?
 }
 
 func convertJSONMessageToDictionary(text: String) -> [String: Any] {
