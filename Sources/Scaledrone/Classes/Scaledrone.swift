@@ -1,4 +1,5 @@
 import Starscream
+import Foundation
 
 public protocol ScaledroneDelegate: class {
     func scaledroneDidConnect(scaledrone: Scaledrone, error: Error?)
