@@ -40,6 +40,10 @@ carthage update
 
 After that, follow the [instructions on Carthage's docs](https://github.com/Carthage/Carthage#adding-frameworks-to-an-application).
 
+### Swift Package Manager
+
+[Use Xcode to add this repo as a package.](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app) Search for `https://github.com/ScaleDrone/Scaledrone-Swift`.
+
 ## Usage
 
 First thing is to import the framework. See the Installation instructions on how to add the framework to your project.
